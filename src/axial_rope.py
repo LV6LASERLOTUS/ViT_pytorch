@@ -13,8 +13,7 @@ class RoPE(nn.Module):
         self.cos_cache = None
 
     def compute_rotation(self):
-        if self.sin_cache and self.cos_cache:
-            print("pass")
+        if self.sin_cache is not None:
             return
 
         # position(t) = [0,1,2...number of blocks]
