@@ -26,7 +26,7 @@ class Attention(nn.Module):
         attention_score = Q @ K.transpose(-1, -2)
 
         # d_k as the dimension of Q and K
-        attention_score = attention_score / torch.sqrt(torch.tensor(K.shape[-1]))
+        attention_score = attention_score / (K.shape[-1] ** 2)
 
         # apply soft max to every row
         attention_weights = torch.softmax(attention_score, dim=-1) @ V
