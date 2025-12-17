@@ -1,11 +1,13 @@
 import torch
 import torch.nn as nn
+from axial_rope import RoPE
 
 
 class Attention(nn.Module):
     def __init__(self, embed_size: int):
         super().__init__()
 
+        self.rope = RoPE(embed_size)
         self.query = nn.Linear(embed_size, embed_size)
         self.key = nn.Linear(embed_size, embed_size)
         self.value = nn.Linear(embed_size, embed_size)
@@ -21,6 +23,10 @@ class Attention(nn.Module):
         Q = self.query(x)
         K = self.key(x)
         V = self.value(x)
+
+        # Perform RoPE
+        Q = self.rope(Q)
+        K = self.rope(K)
 
         # switch last 1 & 2 dimension of Kand multiply Q
         attention_score = Q @ K.transpose(-1, -2)
