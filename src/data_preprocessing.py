@@ -4,7 +4,9 @@ enhancement
 """
 
 import torch
+from datasets import load_dataset
 from torchvision import transforms
+from torch.utils.data import IterableDataset
 
 
 def collate_fn(batch, img_size: int = 224):
@@ -22,3 +24,17 @@ def collate_fn(batch, img_size: int = 224):
     labels = [x["label"] for x in batch]
 
     return images, labels
+
+
+class DataStream(IterableDataset):
+    def __init__(self, path: str, split: str, streaming: bool = True, transform=None):
+        super().__init__()
+        self.dataset = load_dataset(path=path, split=split, streaming=streaming)
+        self.transform = transform
+
+    def __iter__(self):
+        for item in self.dataset:
+            if self.transform:
+                yield self.transform(item)
+            else:
+                yield item
